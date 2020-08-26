@@ -4,6 +4,10 @@
   "description": "检测浏览器支持字体",
   "main": "dist/font-detect.umd.js",
   "module": "dist/font-detect.esm.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iroben/font-detect.git"
+  },
   "scripts": {
     "build":"rollup -c"
   },
