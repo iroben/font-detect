@@ -23,12 +23,12 @@ var fonts = ["PingFang SC", "Hiragino Sans GB", "microsoft yahei", "simsun", "cu
 
 ```
 
-![](https://github.com/iroben/font-detect/images/1.png)
+![](https://github.com/iroben/font-detect/blob/master/images/1.png?raw=true)
 
 循环调用`detect`和[fontdetect.js](https://github.com/f2ex/fontdetect.js)花费的时间差不多，但用`detects`，很明显快了很多，所以`推荐用`
 
-![](https://github.com/iroben/font-detect/images/2.png)
+![](https://github.com/iroben/font-detect/blob/master/images/2.png?raw=true)
 循环调用`detect`，因为改变了字体，所以导致了重排`reflow`
 
-![](https://github.com/iroben/font-detect/images/3.png)
+![](https://github.com/iroben/font-detect/blob/master/images/3.png?raw=true)
 调用`detects`，因为用了文档碎片，只重排了一次
