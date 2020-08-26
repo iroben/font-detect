@@ -1,5 +1,5 @@
 {
-  "name": "font-detect",
+  "name": "web-font-detect",
   "version": "1.0.0",
   "description": "检测浏览器支持字体",
   "main": "dist/font-detect.umd.js",
