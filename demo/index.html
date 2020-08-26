@@ -72,9 +72,9 @@
         }
         function change() {
             if (selectDom.value === '2') {
-                console.time('detects take time ')
+                console.time('FontDetect detects take time ')
                 var supportFonts = fontDetect.detects(fonts)
-                console.timeEnd('detects take time ')
+                console.timeEnd('FontDetect detects take time ')
                 fonts.forEach(v => {
                     row = table.insertRow(-1);
                     col = row.insertCell(-1);
@@ -87,11 +87,11 @@
                 })
             } else {
                 var results = []
-                console.time('font-detect take time ')
+                console.time('FontDetect detect take time ')
                 fonts.forEach((v, i) => {
                     results.push(fontDetect.detect(v))
                 })
-                console.timeEnd('detect take time ')
+                console.timeEnd('FontDetect detect take time ')
                 fonts.forEach((v, i) => {
                     row = table.insertRow(-1);
                     col = row.insertCell(-1);
