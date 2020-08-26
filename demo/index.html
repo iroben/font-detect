@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <title>JavaScript / CSS 字体检测器</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="style.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- <div class="aniwrap">
+        <div class=water></div>
+        <div class=water-bottom></div>
+        <div class="clouds clouds1"></div>
+        <div class="clouds clouds2"></div>
+        <div class="clouds clouds3"></div>
+        <div class="clouds clouds4"></div>
+        <div class="clouds clouds5"></div>
+        <div class=monster></div>
+    </div> -->
+    <div class=anibody>
+        <div class="ui container">
+            <h1>JavaScript / CSS 字体检测器</h1>
+            <p>下表显示了系统中存在哪些字体。（列出了一些最常见的和不常见的字体。）</p>
+            <h1>处理方式：<select onchange="changeDelay()" id="selecttype">
+                    <option value="1">单个生成</option>
+                    <option value="2">批量生成</option>
+                </select></h1>
+            <table id="table" class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>字体名</th>
+                        <th>检测结果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <footer style="position:relative; text-align:center; z-index:99">
+                <a href="https://github.com/f2ex/fontdetect.js" aria-label="fontdetect.js" title="fontdetect.js">
+                    <svg aria-hidden="true" height="24" version="1.1" viewBox="0 0 16 16" width="24">
+                        <path fill="#fafafa"
+                            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                        </path>
+                    </svg>
+                </a>
+            </footer>
+        </div>
+    </div>
+    <style type="text/css">
+        .f_green {
+            color: #4CAF50;
+            font-weight: bold
+        }
+
+        .f_red {
+            color: #E91E63;
+            font-weight: bold
+        }
+    </style>
+    <script type="text/javascript" src="../dist/font-detect.umd.js"></script>
+    <script type="text/javascript">
+        var selectDom = document.getElementById('selecttype')
+        var fonts = ["PingFang SC", "Hiragino Sans GB", "microsoft yahei", "simsun", "cursive", "monospace", "serif", "sans-serif", "fantasy", "default", "Arial", "Arial Black", "Arial Narrow", "Arial Rounded MT Bold", "Bookman Old Style", "Bradley Hand ITC", "Century", "Century Gothic", "Comic Sans MS", "Courier", "Courier New", "Georgia", "Gentium", "Impact", "King", "Lucida Console", "Lalit", "Modena", "Monotype Corsiva", "Papyrus", "Tahoma", "TeX", "Times", "Times New Roman", "Trebuchet MS", "Verdana", "Verona", "Wingdings", "Wingdings 2", "Wingdings 3", "Webdings", "Segoe MDL2 Assets", "Segoe UI Emoji", "Marlett", "Symbol", "HoloLens MDL2 Assets", "Apple Braille", "Apple Color Emoji", "STIXIntegralsD", "STIXIntegralsSm", "STIXIntegralsUpD", "STIXIntegralsUpSm", "STIXNonUnicode", "STIXSizeFiveSym", "STIXSizeFourSym", "STIXSizeOneSym", "STIXSizeThreeSym", "STIXSizeTwoSym", "STIXVariants", "Bodoni Ornaments", "AppleGothic", "Apple SD Gothic Neo", "AppleMyungjo", "GungSeo", "HeadLineA", "Nanum Brush Script", "Nanum Gothic", "Nanum Myeongjo", "Nanum Pen Script", "PCMyungjo", "PilGi"]
+        var fontDetect = new FontDetect();
+        var table = document.getElementById('table');
+        function changeDelay() {
+            table.innerHTML = ''
+            setTimeout(change, 1000)
+        }
+        function change() {
+            if (selectDom.value === '2') {
+                console.time('detects take time ')
+                var supportFonts = fontDetect.detects(fonts)
+                console.timeEnd('detects take time ')
+                fonts.forEach(v => {
+                    row = table.insertRow(-1);
+                    col = row.insertCell(-1);
+                    col.appendChild(document.createTextNode(v))
+                    col.style.fontFamily = v;
+                    col = row.insertCell(-1);
+                    var result = supportFonts.indexOf(v) !== -1
+                    result ? col.className = "f_green" : col.className = "f_red";
+                    col.appendChild(document.createTextNode(result));
+                })
+            } else {
+                var results = []
+                console.time('font-detect take time ')
+                fonts.forEach((v, i) => {
+                    results.push(fontDetect.detect(v))
+                })
+                console.timeEnd('detect take time ')
+                fonts.forEach((v, i) => {
+                    row = table.insertRow(-1);
+                    col = row.insertCell(-1);
+                    col.appendChild(document.createTextNode(v))
+                    col.style.fontFamily = v;
+                    col = row.insertCell(-1);
+                    var result = results[i]
+                    result ? col.className = "f_green" : col.className = "f_red";
+                    col.appendChild(document.createTextNode(result));
+                })
+            }
+        }
+        window.onload = function () {
+            change()
+        }
+    </script>
+</body>
+
+</html>

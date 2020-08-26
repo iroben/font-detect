@@ -1,0 +1,19 @@
+{
+  "name": "font-detect",
+  "version": "1.0.0",
+  "description": "检测浏览器支持字体",
+  "main": "dist/font-detect.esm.js",
+  "module": "dist/font-detect.esm.js",
+  "unpkg": "dist/font-detect.umd.js",
+  "scripts": {
+    "build":"rollup -c"
+  },
+  "keywords": [
+    "font-detect"
+  ],
+  "author": "liubin",
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^2.26.5"
+  }
+}
