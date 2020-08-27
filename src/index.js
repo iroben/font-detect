@@ -84,7 +84,7 @@ class FontDetect {
   }
 
   detects(fontNames) {
-    if (!fontNames || (fontNames.length && fontNames.length == 0)) {
+    if (!fontNames || (fontNames.length && fontNames.length === 0)) {
       return [];
     }
     let multiDom = this.tempSpan.multi;
