@@ -20,8 +20,7 @@ class FontDetect {
     this.isSupportTextContent = "textContent" in document.body;
     this.isSupportClientRect = "getBoundingClientRect" in document.body;
     this.fontContainer = document.createElement("div");
-    this.fontContainer.style.position = "absolute";
-    this.fontContainer.style.right = "4000px";
+    this.fontContainer.style.cssText = "position:absolute;right:4000px";
     /**
      * 将要计算的字体元素放到tempSpan下，方便一次删除，减少DOM操作
      */
@@ -43,9 +42,7 @@ class FontDetect {
   }
   createSpanWithFontFamily(fontFamily) {
     let span = document.createElement("span");
-    span.style.fontFamily = fontFamily;
-    span.style.fontSize = this.testFontSize;
-    // span.style.display = "inline-block";
+    span.style.cssText = `font-family:${fontFamily};font-size:${this.testFontSize}`;
     if (this.isSupportTextContent) {
       span.textContent = this.testString;
     } else {
@@ -103,7 +100,7 @@ class FontDetect {
           rectInfo = child.getBoundingClientRect();
         } else {
           rectInfo.width = child.offsetWidth;
-          rectInfo.height = child.height;
+          rectInfo.height = child.offsetHeight;
         }
         /**
          * 有些字体的高度有1个像素的误差，不知道什么情况
