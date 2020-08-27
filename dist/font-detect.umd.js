@@ -90,7 +90,7 @@
     }
 
     detects(fontNames) {
-      if (!fontNames || (fontNames.length && fontNames.length == 0)) {
+      if (!fontNames || (fontNames.length && fontNames.length === 0)) {
         return [];
       }
       let multiDom = this.tempSpan.multi;
@@ -111,15 +111,16 @@
       multiDom.appendChild(this.documentFragment);
       this.fontContainer.appendChild(multiDom);
       let supportFonts = [];
-      for (let i = 0; i < multiDom.children.length; i += 3) {
-        for (let j = 0; j < this.baseFont.length; j++) {
+      let baseFontLength = this.baseFont.length;
+      for (let i = 0; i < multiDom.children.length; i += baseFontLength) {
+        for (let j = 0; j < baseFontLength; j++) {
           if (
             multiDom.children[i + j].offsetWidth !==
               this.baseInfo[this.baseFont[j]].w ||
             multiDom.children[i + j].offsetHeight !==
               this.baseInfo[this.baseFont[j]].h
           ) {
-            supportFonts.push(fontNames[parseInt(Math.ceil(i / 3))]);
+            supportFonts.push(fontNames[parseInt(Math.ceil(i / baseFontLength))]);
             break;
           }
         }
