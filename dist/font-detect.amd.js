@@ -18,6 +18,7 @@ define(function () { 'use strict';
        */
       this.baseInfo = {};
       this.isSupportTextContent = "textContent" in document.body;
+      this.isSupportClientRect = "getBoundingClientRect" in document.body;
       this.fontContainer = document.createElement("div");
       this.fontContainer.style.position = "absolute";
       this.fontContainer.style.right = "4000px";
@@ -43,12 +44,12 @@ define(function () { 'use strict';
     createSpanWithFontFamily(fontFamily) {
       let span = document.createElement("span");
       span.style.fontFamily = fontFamily;
-      span.style.display = "inline-block";
       span.style.fontSize = this.testFontSize;
+      // span.style.display = "inline-block";
       if (this.isSupportTextContent) {
         span.textContent = this.testString;
       } else {
-        span.innerText = this.testString;
+        span.innerHTML = this.testString;
       }
       return span;
     }
@@ -65,24 +66,13 @@ define(function () { 'use strict';
           h: single.children[i].offsetHeight,
         };
       });
+      this.fontContainer.removeChild(single);
+      this.tempSpan.single = null;
     }
 
     detect(fontName) {
       this.reset();
-      let single = this.tempSpan.single;
-      this.baseFont.forEach((v, i) => {
-        single.children[i].style.fontFamily = fontName + "," + v;
-      });
-
-      for (var i = this.baseFont.length - 1; i >= 0; i--) {
-        if (
-          single.children[i].offsetWidth !== this.baseInfo[this.baseFont[i]].w ||
-          single.children[i].offsetHeight !== this.baseInfo[this.baseFont[i]].h
-        ) {
-          return true;
-        }
-      }
-      return false;
+      return this.detects([fontName]).length > 0;
     }
 
     detects(fontNames) {
@@ -90,12 +80,6 @@ define(function () { 'use strict';
         return [];
       }
       let multiDom = this.tempSpan.multi;
-      // 延迟删除DOM
-      if (multiDom) {
-        this.fontContainer.removeChild(multiDom);
-        this.tempSpan.multi = document.createElement("span");
-        multiDom = this.tempSpan.multi;
-      }
       this.reset();
       fontNames.forEach((fontName) => {
         this.baseFont.forEach((v) => {
@@ -108,18 +92,36 @@ define(function () { 'use strict';
       this.fontContainer.appendChild(multiDom);
       let supportFonts = [];
       let baseFontLength = this.baseFont.length;
-      for (let i = 0; i < multiDom.children.length; i += baseFontLength) {
+      for (let i = 0; i < fontNames.length; i++) {
         for (let j = 0; j < baseFontLength; j++) {
+          let child = multiDom.children[i * baseFontLength + j];
+          let rectInfo = {
+            width: 0,
+            height: 0,
+          };
+          if (this.isSupportClientRect) {
+            rectInfo = child.getBoundingClientRect();
+          } else {
+            rectInfo.width = child.offsetWidth;
+            rectInfo.height = child.height;
+          }
+          /**
+           * 有些字体的高度有1个像素的误差，不知道什么情况
+           * 比如：AI Tarikh
+           */
           if (
-            multiDom.children[i + j].offsetWidth !==
-              this.baseInfo[this.baseFont[j]].w ||
-            multiDom.children[i + j].offsetHeight !==
-              this.baseInfo[this.baseFont[j]].h
+            Math.abs(rectInfo.width - this.baseInfo[this.baseFont[j]].w) > 1 ||
+            Math.abs(rectInfo.height - this.baseInfo[this.baseFont[j]].h) > 1
           ) {
-            supportFonts.push(fontNames[parseInt(Math.ceil(i / baseFontLength))]);
+            supportFonts.push(fontNames[i]);
             break;
           }
         }
+      }
+
+      if (multiDom) {
+        this.fontContainer.removeChild(multiDom);
+        this.tempSpan.multi = document.createElement("span");
       }
       return supportFonts;
     }
