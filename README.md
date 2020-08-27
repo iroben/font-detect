@@ -2,16 +2,21 @@
 参考[fontdetect.js](https://github.com/f2ex/fontdetect.js)修改的，主要是在操作`DOM`的时候，用了文档碎片，和复用`DOM`，减少`reflow`
 
 # 使用
-
+## 安装
+```
+npm i web-font-detect
+```
 ## 单一检测字体
 
 ```
+ import FontDetect from "web-font-detect";
  var fontDetect = new FontDetect();
  fontDetect.detect('$fontFamily'); // 返回 boolean值
 ```
 
 ## 检测一组字体（推荐用，减少`reflow`）
 ```
+import FontDetect from "web-font-detect";
 var fonts = ["PingFang SC", "Hiragino Sans GB", "microsoft yahei"]
 var fontDetect = new FontDetect();
  fontDetect.detects(fonts)； // 返回支持的字体
