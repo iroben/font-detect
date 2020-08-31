@@ -28,14 +28,20 @@
       /**
        * 将要计算的字体元素放到tempSpan下，方便一次删除，减少DOM操作
        */
-      this.tempSpan = {
-        single: document.createElement("span"), //判断单个字体用，对应 detect 方法
-        multi: document.createElement("span"), //判断多个字体用，对应 detects 方法
-      };
+      this.tempSpan = document.createElement("span");
 
-      this.fontContainer.appendChild(this.tempSpan.single);
-      this.fontContainer.appendChild(this.tempSpan.multi);
+      this.fontContainer.appendChild(this.tempSpan);
       document.body.appendChild(this.fontContainer);
+      let win = window;
+      let raf =
+        win.requestAnimationFrame ||
+        win.webkitRequestAnimationFrame ||
+        win.mozRequestAnimationFrame ||
+        win.msRequestAnimationFrame ||
+        function (cb) {
+          return setTimeout(cb, 16);
+        };
+      this.raf = raf.bind(win);
       this._initBaseFontInfo();
     }
     _reset() {
@@ -51,7 +57,7 @@
       if (this.isSupportTextContent) {
         span.textContent = this.testString;
       } else {
-        span.innerHTML = this.testString;
+        span.innerText = this.testString;
       }
       return span;
     }
@@ -60,16 +66,16 @@
       this.baseFont.forEach((v) => {
         this.documentFragment.appendChild(this._createSpanWithFontFamily(v));
       });
-      let single = this.tempSpan.single;
-      single.appendChild(this.documentFragment);
+      let tempSpan = this.tempSpan;
+      tempSpan.appendChild(this.documentFragment);
       this.baseFont.forEach((v, i) => {
         this.baseInfo[v] = {
-          w: single.children[i].offsetWidth,
-          h: single.children[i].offsetHeight,
+          w: tempSpan.children[i].offsetWidth,
+          h: tempSpan.children[i].offsetHeight,
         };
       });
-      this.fontContainer.removeChild(single);
-      this.tempSpan.single = null;
+      this.fontContainer.removeChild(tempSpan);
+      this.tempSpan = document.createElement("span");
     }
 
     detect(fontName) {
@@ -77,16 +83,16 @@
     }
 
     _detectAndCache(unCacheFontNames) {
-      let multiDom = this.tempSpan.multi;
+      let tempSpan = this.tempSpan;
       let fontCache = FontDetect.fontCache;
       let baseFontLength = this.baseFont.length;
       let supportFonts = [];
-      multiDom.appendChild(this.documentFragment);
-      this.fontContainer.appendChild(multiDom);
+      tempSpan.appendChild(this.documentFragment);
+      this.fontContainer.appendChild(tempSpan);
       for (let i = 0; i < unCacheFontNames.length; i++) {
         let isSupport = false;
         for (let j = 0; j < baseFontLength; j++) {
-          let child = multiDom.children[i * baseFontLength + j];
+          let child = tempSpan.children[i * baseFontLength + j];
           let rectInfo = {
             width: 0,
             height: 0,
@@ -116,16 +122,19 @@
           fontCache[this.testFontSize].unsupport.add(unCacheFontNames[i]);
         }
       }
-      if (multiDom) {
-        this.fontContainer.removeChild(multiDom);
-        this.tempSpan.multi = document.createElement("span");
+      if (tempSpan) {
+        this.fontContainer.removeChild(tempSpan);
+        this.tempSpan = document.createElement("span");
       }
       return supportFonts;
     }
 
-    detects(fontNames) {
+    _checkCache(fontNames) {
       if (!fontNames || (fontNames.length && fontNames.length === 0)) {
-        return [];
+        return {
+          supportFonts: [],
+          unCacheFontNames: [],
+        };
       }
       let fontCache = FontDetect.fontCache;
       if (!(this.testFontSize in fontCache)) {
@@ -152,11 +161,35 @@
           );
         }
       }
+      return {
+        supportFonts,
+        unCacheFontNames,
+      };
+    }
+
+    detects(fontNames) {
+      let { unCacheFontNames, supportFonts } = this._checkCache(fontNames);
       if (unCacheFontNames.length === 0) {
         // 所有字体从缓存中获取了，就不用创建DOM检测了
         return supportFonts;
       }
       return supportFonts.concat(this._detectAndCache(unCacheFontNames));
+    }
+
+    promiseDetects(fontNames) {
+      let { unCacheFontNames, supportFonts } = this._checkCache(fontNames);
+      if (unCacheFontNames.length === 0) {
+        // 所有字体从缓存中获取了，就不用创建DOM检测了
+        return new Promise((resolve) => {
+          resolve(supportFonts);
+        });
+      }
+      return new Promise((resolve) => {
+        this.raf(() => {
+          console.log('resolve');
+          resolve(supportFonts.concat(this._detectAndCache(unCacheFontNames)));
+        });
+      });
     }
   }
 

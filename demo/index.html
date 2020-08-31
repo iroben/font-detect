@@ -25,8 +25,11 @@
             <h1>JavaScript / CSS 字体检测器</h1>
             <p>下表显示了系统中存在哪些字体。（列出了一些最常见的和不常见的字体。）</p>
             <h1>处理方式：<select onchange="changeDelay()" id="selecttype">
-                    <option value="1">单个生成</option>
-                    <option value="2">批量生成</option>
+                
+                <option value="3">promise 批量生成</option>
+                <option value="2">批量生成</option>    
+                <option value="1">单个生成</option>
+                
                 </select></h1>
             <table id="table" class="ui celled table">
                 <thead>
@@ -86,6 +89,23 @@
                     result ? col.className = "f_green" : col.className = "f_red";
                     col.appendChild(document.createTextNode(result));
                 })
+            } else if (selectDom.value === '3') {
+                console.time('promise FontDetect detects take time ')
+                fontDetect.promiseDetects(fonts).then(supportFonts => {
+                    console.timeEnd('promise FontDetect detects take time ')
+                    // console.log(JSON.stringify(supportFonts))
+                    fonts.forEach(v => {
+                        row = table.insertRow(-1);
+                        col = row.insertCell(-1);
+                        col.appendChild(document.createTextNode(v))
+                        col.style.fontFamily = v;
+                        col = row.insertCell(-1);
+                        var result = supportFonts.indexOf(v) !== -1
+                        result ? col.className = "f_green" : col.className = "f_red";
+                        col.appendChild(document.createTextNode(result));
+                    })
+                })
+
             } else {
                 var results = []
                 // var supportFonts = []
