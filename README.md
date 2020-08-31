@@ -10,13 +10,18 @@
 npm i web-font-detect
 ```
 
-## 单一检测字体
+
+## 检测一组字体（推荐用）
 
 ```
- import FontDetect from "web-font-detect";
- var fontDetect = new FontDetect();
- fontDetect.detect('$fontFamily'); // 返回 boolean值
+import FontDetect from "web-font-detect";
+var fonts = ["PingFang SC", "Hiragino Sans GB", "microsoft yahei"]
+var fontDetect = new FontDetect();
+fontDetect.promiseDetects(fonts).then(supportFonts=>{
+    console.log(supportFonts)
+})； // 返回支持的字体
 ```
+
 
 ## 检测一组字体
 
@@ -28,34 +33,51 @@ var supportFonts fontDetect.detects(fonts)； // 返回支持的字体
 console.log(supportFonts)
 ```
 
-## 检测一组字体（推荐用，减少`reflow`）
+
+## 单一检测字体
 
 ```
-import FontDetect from "web-font-detect";
-var fonts = ["PingFang SC", "Hiragino Sans GB", "microsoft yahei"]
-var fontDetect = new FontDetect();
-fontDetect.promiseDetects(fonts).then(supportFonts=>{
-    console.log(supportFonts)
-})； // 返回支持的字体
+ import FontDetect from "web-font-detect";
+ var fontDetect = new FontDetect();
+ fontDetect.detect('$fontFamily'); // 返回 boolean值
 ```
 
 ## `promiseDetects`和`detects`区别
 
 `promiseDetects`在浏览器的`requestAnimationFrame`事件中检测字体
 
-## 测试数据和结果
+## 测试数据和结果（555个字体）,测试6次
+
+`promiseDetects` 平均耗时：`1345`
 
 ```
-var fonts = ["PingFang SC", "Hiragino Sans GB", "microsoft yahei", "simsun", "cursive", "monospace", "serif", "sans-serif", "fantasy", "default", "Arial", "Arial Black", "Arial Narrow", "Arial Rounded MT Bold", "Bookman Old Style", "Bradley Hand ITC", "Century", "Century Gothic", "Comic Sans MS", "Courier", "Courier New", "Georgia", "Gentium", "Impact", "King", "Lucida Console", "Lalit", "Modena", "Monotype Corsiva", "Papyrus", "Tahoma", "TeX", "Times", "Times New Roman", "Trebuchet MS", "Verdana", "Verona", "Wingdings", "Wingdings 2", "Wingdings 3", "Webdings", "Segoe MDL2 Assets", "Segoe UI Emoji", "Marlett", "Symbol", "HoloLens MDL2 Assets", "Apple Braille", "Apple Color Emoji", "STIXIntegralsD", "STIXIntegralsSm", "STIXIntegralsUpD", "STIXIntegralsUpSm", "STIXNonUnicode", "STIXSizeFiveSym", "STIXSizeFourSym", "STIXSizeOneSym", "STIXSizeThreeSym", "STIXSizeTwoSym", "STIXVariants", "Bodoni Ornaments", "AppleGothic", "Apple SD Gothic Neo", "AppleMyungjo", "GungSeo", "HeadLineA", "Nanum Brush Script", "Nanum Gothic", "Nanum Myeongjo", "Nanum Pen Script", "PCMyungjo", "PilGi"]
-
+1383.2529296875ms
+1265.2841796875ms
+1262.455810546875ms
+1499.126953125ms
+1222.503173828125ms
+1443.22900390625ms
 ```
 
-![](https://github.com/iroben/font-detect/blob/master/images/1.png?raw=true)
+`detects` 平均耗时：`1364`
 
-循环调用`detect`和[fontdetect.js](https://github.com/f2ex/fontdetect.js)花费的时间差不多，但用`detects`，很明显快了很多，所以`推荐用`
+```
+1424.771240234375ms
+1281.14794921875ms
+1318.2998046875ms
+1360.218017578125ms
+1458.3408203125ms
+1348.72314453125ms
+```
 
-![](https://github.com/iroben/font-detect/blob/master/images/2.png?raw=true)
-循环调用`detect`，因为改变了字体，所以导致了重排`reflow`
 
-![](https://github.com/iroben/font-detect/blob/master/images/3.png?raw=true)
-调用`detects`，因为用了文档碎片，只重排了一次
+`detect` 平均耗时：`1749`
+
+```
+1778.216064453125ms
+1742.853271484375ms
+1591.015869140625ms
+1761.057861328125ms
+1766.262939453125ms
+1859.827880859375ms
+```
