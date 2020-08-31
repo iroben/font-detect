@@ -186,7 +186,6 @@
       }
       return new Promise((resolve) => {
         this.raf(() => {
-          console.log('resolve');
           resolve(supportFonts.concat(this._detectAndCache(unCacheFontNames)));
         });
       });

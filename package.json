@@ -1,6 +1,6 @@
 {
   "name": "web-font-detect",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "检测浏览器支持字体",
   "main": "dist/font-detect.umd.js",
   "module": "dist/font-detect.esm.js",
